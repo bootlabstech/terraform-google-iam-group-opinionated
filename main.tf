@@ -18,7 +18,7 @@ locals {
     for g in var.groups : [
       for r in g.folder_roles : {
         id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}|${r}"
-        group_id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}"
+        group_id = "group:${var.group_prefix}-${g.display_name_postfix}@${var.domain}"
         role = r
       }
     ]
@@ -28,7 +28,7 @@ locals {
     for g in var.groups : [
       for r in g.folder_roles : {
         id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}|${r}"
-        group_id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}"
+        group_id = "group:${var.group_prefix}-${g.display_name_postfix}@${var.domain}"
         role = r
       }
     ]
