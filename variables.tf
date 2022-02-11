@@ -1,6 +1,5 @@
 variable "groups" {
   description = "List of custom group definitions (refer to variables file for syntax). display_name_postfix will be used like this <group_prefix>-<display_name_postfix>"
-  default     = []
   type = list(object({
     display_name_postfix = string
     initial_group_config = string
