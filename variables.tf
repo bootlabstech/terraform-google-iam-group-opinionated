@@ -11,7 +11,7 @@ variable "groups" {
 
 variable "folder" {
   type        = string
-  description = "The name of the Folder in the form {folder_id} or folders/{folder_id}"
+  description = "The name of the Folder in the form {folder_id} or folders/{folder_id}, if this is set to null, the iam binding will happen at organization level"
 }
 
 variable "group_prefix" {

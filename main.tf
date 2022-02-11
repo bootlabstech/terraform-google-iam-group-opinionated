@@ -14,7 +14,7 @@ locals {
     "external" = "system/groups/external"
   }
 
-  folder_binding = flatten([
+  folder_binding = var.folder != null ? flatten([
     for g in var.groups : [
       for r in g.folder_roles : {
         id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}|${r}"
@@ -22,7 +22,17 @@ locals {
         role = r
       }
     ]
-  ])
+  ]) : []
+
+  org_binding = var.folder == null ? flatten([
+    for g in var.groups : [
+      for r in g.folder_roles : {
+        id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}|${r}"
+        group_id = "${var.group_prefix}-${g.display_name_postfix}@${var.domain}"
+        role = r
+      }
+    ]
+  ]) : []
 }
 
 resource "google_cloud_identity_group" "cloud_identity_group_basic" {
@@ -40,12 +50,24 @@ resource "google_cloud_identity_group" "cloud_identity_group_basic" {
 }
 
 data "google_folder" "folder" {
+  count               = var.folder != null ? 1 : 0
   folder              = var.folder
 } 
 
 resource "google_folder_iam_member" "folder" {
   for_each    = { for f in local.folder_binding : f.id => f }
-  folder      = data.google_folder.folder.name
+  folder      = data.google_folder.folder[0].name
+  role        = each.value.role
+  member      = each.value.group_id
+
+  depends_on  = [
+    google_cloud_identity_group.cloud_identity_group_basic
+  ]
+}
+
+resource "google_organization_iam_member" "org" {
+  for_each    = { for f in local.org_binding : f.id => f }
+  org_id      = data.google_organization.org.org_id
   role        = each.value.role
   member      = each.value.group_id
 
