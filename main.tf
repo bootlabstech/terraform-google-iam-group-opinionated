@@ -74,4 +74,12 @@ resource "google_organization_iam_member" "org" {
   depends_on  = [
     google_cloud_identity_group.cloud_identity_group_basic
   ]
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      etag,
+    ]
+  }
 }
